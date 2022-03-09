@@ -6,11 +6,10 @@ set shiftwidth=4  "默认缩进4个空格
 set softtabstop=4  "使用tab时 tab空格数
 set tabstop=4  "tab代表4个空格
 set expandtab "tab自动转换为空格
-"set nowrapscan "禁止循环查找
 set modifiable
 set hidden " 允许在有未保存的修改时切换缓冲区，此时的修改由 vim 负责保存
 set history=400 "设置历史数目
-" set cursorcolumn " 突出显示当前列
+set cursorcolumn " 突出显示当前列
 set cursorline "突出显示当前行
 " autocmd InsertEnter * se cul "用浅色高亮当前行
 " set showtabline=0 "关闭tab
@@ -34,12 +33,14 @@ set fileformats=unix,dos
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 """""""""""""""""""""" color""""""""""""""""""""""""""""""""""""""""""""""""""""
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 if &bg == "dark"   " 根据你的背景色风格来设置不同的书签颜色
     highlight SignColor ctermfg=white ctermbg=blue guifg=wheat guibg=peru
 else               " 主要就是修改guibg的值来设置书签的颜色
     highlight SignColor ctermbg=white ctermfg=blue guibg=grey guifg=RoyalBlue3
 endif
+
+" set guifont=Consolas:h11
 
 if $TERM =~ '^xterm' || $TERM =~ '^screen' || $TERM=~ '256color$'
     set t_Co=256
@@ -100,20 +101,20 @@ set autowrite "在切换buffer时自动保存当前文件
 set scrolloff=7 "光标移动到buffer的顶部和底部时保持3行的距离
 
 " 相对行号: 行号变成相对，可以用 nj/nk 进行跳转
-set relativenumber number
-au FocusLost * :set norelativenumber number
-au FocusGained * :set relativenumber
-" 插入模式下用绝对行号, 普通模式下用相对
-autocmd InsertEnter * :set norelativenumber number
-autocmd InsertLeave * :set relativenumber
-function! NumberToggle()
-  if(&relativenumber == 1)
-    set norelativenumber number
-  else
-    set relativenumber
-  endif
-endfunc
-nnoremap <C-n> :call NumberToggle()<cr>
+" set relativenumber number
+" au FocusLost * :set norelativenumber number
+" au FocusGained * :set relativenumber
+" " 插入模式下用绝对行号, 普通模式下用相对
+" autocmd InsertEnter * :set norelativenumber number
+" autocmd InsertLeave * :set relativenumber
+" function! NumberToggle()
+"   if(&relativenumber == 1)
+"     set norelativenumber number
+"   else
+"     set relativenumber
+"   endif
+" endfunc
+" nnoremap <C-n> :call NumberToggle()<cr>
 
 
 " let mapleader=","
@@ -185,8 +186,8 @@ map <Leader><leader>l <Plug>(easymotion-lineforward)
 let g:qs_highlight_on_keys = ['f', 'F', 't', 'T']
 " Trigger a highlight only when pressing f and F.
 let g:qs_highlight_on_keys = ['f', 'F']
-let g:qs_first_occurrence_highlight_color = 155       " terminal vim
-let g:qs_second_occurrence_highlight_color = 81         " terminal vim
+" let g:qs_first_occurrence_highlight_color = 155       " terminal vim
+" let g:qs_second_occurrence_highlight_color = 81         " terminal vim
 " Map the leader key + q to toggle quick-scope's highlighting in normal/visual mode.
 " Note that you must use nmap/vmap instead of their non-recursive versions (nnoremap/vnoremap).
 nmap <leader>f <plug>(QuickScopeToggle)
@@ -204,13 +205,14 @@ if executable('ag')
 endif
 " Bind C-k for Clear all cache and open CtrlP
 " nnoremap <silent> <C-k> :ClearAllCtrlPCache<CR>\|:CtrlP<CR>
+let g:ag_prg="ag --vimgrep"
 
 "grep插件
 let g:EasyGrepMode = 0     " All:0, Open Buffers:1, TrackExt:2, 
 let g:EasyGrepCommand = 0  " Use vimgrep:0, grepprg:1
 let g:EasyGrepRecursive  = 1 " Recursive searching
 let g:EasyGrepIgnoreCase = 1 " not ignorecase:0
-let g:EasyGrepFilesToExclude = "*.bak, *~, cscope.*, *.a, *.o, *.pyc, *.bak, .git"
+let g:EasyGrepFilesToExclude = "*.bak, *~, cscope.*, *.a, *.o, *.pyc, *.bak, .git, tags, *.tar.gz"
 nmap <Leader>vu :ReplaceUndo<CR> 
 
 
@@ -256,51 +258,71 @@ let Tlist_Ctags_Cmd='ctags'
 let Tlist_Show_One_File=1               "不同时显示多个文件的tag，只显示当前文件的
 let Tlist_WinWidt =28                    "设置taglist的宽度
 let Tlist_Exit_OnlyWindow=1             "如果taglist窗口是最后一个窗口，则退出vim
-"let Tlist_Use_Right_Window=1            "在右侧窗口中显示taglist窗口
+let Tlist_Use_Right_Window=1            "在右侧窗口中显示taglist窗口
 let Tlist_Use_Left_Window =1                "在左侧窗口中显示taglist窗口
 
 let g:tagbar_ctags_bin='ctags'            "ctags程序的路径
 let g:tagbar_width=30                    "窗口宽度的设置
-let g:tagbar_left = 1
-"map <F5> :!ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR><CR> :TlistUpdate<CR>
-"map <F5> <ESC>:!ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR><CR> :TlistUpdate<CR>
-"set tags=./tags;
-set tags=./multimediad.tags;
-set tags=./multimedia.tags;
-set tags+=./npm.tags;
-set tags+=./caf2.tags;
+" let g:tagbar_left = 1
+map <F5> :!ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR><CR> :TlistUpdate<CR>
+map <F5> <ESC>:!ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR><CR> :TlistUpdate<CR>
+set tags=./tags;
+" set tags=./multimediad.tags;
+" set tags=./multimedia.tags;
+" set tags+=./npm.tags;
+" set tags+=./caf2.tags;
 map <F3> :Tagbar<CR>
 map <F4> :tp<CR>
 map <F6> :tn<CR>
 
+" 括号匹配高亮
+let g:rbpt_colorpairs = [
+    \ ['brown',       'RoyalBlue3'],
+    \ ['Darkblue',    'SeaGreen3'],
+    \ ['darkgray',    'DarkOrchid3'],
+    \ ['darkgreen',   'firebrick3'],
+    \ ['darkcyan',    'RoyalBlue3'],
+    \ ['darkred',     'SeaGreen3'],
+    \ ['darkmagenta', 'DarkOrchid3'],
+    \ ['brown',       'firebrick3'],
+    \ ['gray',        'RoyalBlue3'],
+    \ ['black',       'SeaGreen3'],
+    \ ['darkmagenta', 'DarkOrchid3'],
+    \ ['Darkblue',    'firebrick3'],
+    \ ['darkgreen',   'RoyalBlue3'],
+    \ ['darkcyan',    'SeaGreen3'],
+    \ ['darkred',     'DarkOrchid3'],
+    \ ['red',         'firebrick3'],
+    \ ]
+let g:rbpt_max = 40
+let g:rbpt_loadcmd_toggle = 1
 
-" let OmniCpp_NamespaceSearch = 1
-" let OmniCpp_GlobalScopeSearch = 1
-" let OmniCpp_DisplayMode = 1
-" let OmniCpp_ShowAccess = 1
-" let OmniCpp_ShowPrototypeInAbbr = 1 " 显示函数参数列表
-" let OmniCpp_MayCompleteDot = 1   " 输入 .  后自动补全
-" let OmniCpp_MayCompleteArrow = 1 " 输入 -> 后自动补全
-" let OmniCpp_MayCompleteScope = 1 " 输入 :: 后自动补全
-" let OmniCpp_DefaultNamespaces = ["std", "_GLIBCXX_STD"]
-" " 自动关闭补全窗口
-" au CursorMovedI,InsertLeave * if pumvisible() == 0|silent! pclose|endif
-" set completeopt=menuone,menu,longest
-" highlight Pmenu    guibg=darkgrey guifg=black
-" highlight PmenuSel guibg=lightgrey guifg=black
-" mapping
-" inoremap <expr> <CR>       pumvisible()?"\<C-Y>":"\<CR>"
-" inoremap <expr> <C-J>      pumvisible()?"\<PageDown>\<C-N>\<C-P>":"\<C-X><C-O>"
-" inoremap <expr> <C-K>      pumvisible()?"\<PageUp>\<C-P>\<C-N>":"\<C-K>"
-" inoremap <expr> <C-U>      pumvisible()?"\<C-E>":"\<C-U>"
+" 缩进可视化
+let g:indent_guides_enable_on_vim_startup = 0  " 默认关闭
+let g:indent_guides_guide_size            = 1  " 指定对齐线的尺寸
+let g:indent_guides_start_level 	  = 1  " 从第二层开始可视化显示缩进
 
 
-" let g:SuperTabRetainCompletionType=1
-" let g:SuperTabDefaultCompletionType="context"
-"0 - 不记录上次的补全方式
-"1 - 记住上次的补全方式,直到用其他的补全命令改变它
-"2 - 记住上次的补全方式,直到按ESC退出插入模式为止
-
+" YouCompleteMe
+set runtimepath+=~/.vim/bundle/YouCompleteMe
+let g:ycm_collect_identifiers_from_tags_files = 1           " 开启 YCM 基于标签引擎
+let g:ycm_collect_identifiers_from_comments_and_strings = 0 " 注释与字符串中的内容也用于补全
+let g:syntastic_ignore_files=[".*\.py$"]
+let g:ycm_seed_identifiers_with_syntax = 1                  " 语法关键字补全
+let g:ycm_complete_in_comments = 1
+let g:ycm_confirm_extra_conf = 0
+let g:ycm_key_list_select_completion = ['<TAB>', '<c-n>', '<Down>'] 
+let g:ycm_key_list_previous_completion = ['<S-TAB>', '<c-p>', '<Up>']
+" let g:ycm_key_list_select_completion = ['<c-n>', '<Down>']  " 映射按键, 没有这个会拦截掉tab, 导致其他插件的tab不能用.
+" let g:ycm_key_list_previous_completion = ['<c-p>', '<Up>']
+let g:ycm_complete_in_comments = 1                          " 在注释输入中也能补全
+let g:ycm_complete_in_strings = 1                           " 在字符串输入中也能补全
+let g:ycm_collect_identifiers_from_comments_and_strings = 1 " 注释和字符串中的文字也会被收入补全
+let g:ycm_global_ycm_extra_conf='~/.vim/bundle/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py'
+let g:ycm_show_diagnostics_ui = 0                           " 禁用语法检查
+inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<CR>" |            " 回车即选中当前项
+nnoremap <c-j> :YcmCompleter GoToDefinitionElseDeclaration<CR>|     " 跳转到定义处
+"let g:ycm_min_num_of_chars_for_completion=2                 " 从第2个键入字符就开始罗列匹配项
 
 let NERDTreeWinPos='left'
 let NERDTreeWinSize=30
@@ -332,8 +354,8 @@ nnoremap <Leader>bf :bfirst<CR>
 nnoremap <Leader>bl :blast<CR>
 nnoremap <Leader>bd :bdelete
 " 使用方向键切换buffer
-noremap <left> :bprevious<CR>
-noremap <right> :bnext<CR>
+" noremap <left> :bprevious<CR>
+" noremap <right> :bnext<CR>
 
 
 " quickfix窗口映射
@@ -526,3 +548,9 @@ autocmd TabLeave * let g:last_active_tab = tabpagenr()
 " 新建tab  Ctrl+t
 " nnoremap <C-t>     :tabnew<CR>
 " inoremap <C-t>     <Esc>:tabnew<CR>
+
+set mouse=a
+
+nnoremap <leader>v "+gp
+" imap <leader>v  <esc>"+gp"
+vmap <leader>c "+y
